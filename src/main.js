@@ -1,14 +1,67 @@
-import './assets/main.css'
+import { createApp } from "vue";
+import { createPinia } from "pinia";
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import AppWrapper from "./AppWrapper.vue";
+import router from "./services/router";
+import "./assets/main.css";
 
-import App from './App.vue'
-import router from './router'
+import PrimeVue from "primevue/config";
 
-const app = createApp(App)
+// PrimeVue Component
+import "primevue/resources/themes/lara-light-indigo/theme.css";
+import "primevue/resources/primevue.min.css";
 
-app.use(createPinia())
-app.use(router)
+// PrimeVue Icon
+import "primeicons/primeicons.css";
 
-app.mount('#app')
+// PrimeVue CSS
+import "/node_modules/primeflex/primeflex.css";
+
+// Components
+import UserItem from "@/components/common/UserItem.vue";
+import RemovePopup from "@/components/common/RemovePopup.vue";
+
+import InputText from "primevue/inputtext";
+import Password from "primevue/password";
+import Button from "primevue/button";
+import Galleria from "primevue/galleria";
+import Carousel from "primevue/carousel";
+import Dropdown from "primevue/dropdown";
+import Calendar from "primevue/calendar";
+import Dialog from "primevue/dialog";
+import ProgressSpinner from "primevue/progressspinner";
+import TabView from "primevue/tabview";
+import TabPanel from "primevue/tabpanel";
+import FileUpload from "primevue/fileupload";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import Editor from "primevue/editor";
+import ScrollPanel from "primevue/scrollpanel";
+
+const app = createApp(AppWrapper);
+
+app.use(createPinia());
+app.use(router);
+app.use(PrimeVue);
+
+app.component("UserItem", UserItem);
+app.component("RemovePopup", RemovePopup);
+
+app.component("InputText", InputText);
+app.component("Password", Password);
+app.component("Button", Button);
+app.component("Galleria", Galleria);
+app.component("Carousel", Carousel);
+app.component("Dropdown", Dropdown);
+app.component("Calendar", Calendar);
+app.component("Dialog", Dialog);
+app.component("ProgressSpinner", ProgressSpinner);
+app.component("TabView", TabView);
+app.component("TabPanel", TabPanel);
+app.component("FileUpload", FileUpload);
+app.component("DataTable", DataTable);
+app.component("Column", Column);
+app.component("Editor", Editor);
+app.component("ScrollPanel", ScrollPanel);
+
+app.mount("#app");
