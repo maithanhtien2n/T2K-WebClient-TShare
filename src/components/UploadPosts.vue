@@ -1,7 +1,18 @@
 <script setup>
 import { reactive } from "vue";
+import { appLocalStorage, formatDate } from "@/utils";
+import { StoreApp } from "@/services/stores";
+
+const { onGetterUserInfo } = StoreApp();
+
+const { onActionCreateNewPosts } = StoreApp();
+
+const { user_info } = appLocalStorage();
+
+const emits = defineEmits(["onEmitUpdateListPosts"]);
 
 const formData = new FormData();
+
 const data = reactive({
   formUploadPosts: {
     postsContent: "",
@@ -9,8 +20,8 @@ const data = reactive({
   },
   previewFile: "",
   typeFile: "",
-  display: false,
   loadingFile: false,
+  display: false,
 });
 
 const onUploadFile = (e, previewFile, postsFile) => {
@@ -37,20 +48,27 @@ const onClickOpenUploadPosts = () => {
 };
 
 const onClickUploadPosts = async (value) => {
-  formData.set("postsContent", value.postsContent);
-  formData.set("postsFile", value.postsFile);
+  formData.set("user_id", user_info.user_id);
+  formData.set("posts_content", value.postsContent);
+  formData.set("posts_file", value.postsFile);
+  formData.set("type_file", data.typeFile);
 
-  data.display = false;
+  const res = await onActionCreateNewPosts(formData);
+
+  if (res) {
+    data.display = false;
+    emits("onEmitUpdateListPosts");
+    data.formUploadPosts.postsContent = "";
+    data.formUploadPosts.postsFile = "";
+    data.previewFile = "";
+    data.typeFile = "";
+  }
 };
 </script>
 
 <template>
-  <div class="card flex align-items-center gap-2">
-    <img
-      class="avatar object-fit-cover"
-      src="https://toigingiuvedep.vn/wp-content/uploads/2022/11/avatar-ngau-cool-nam.jpg"
-      alt=""
-    />
+  <div class="card w-full flex align-items-center gap-2">
+    <UserItem :userAvatar="onGetterUserInfo?.avatar" />
 
     <div
       @click="onClickOpenUploadPosts()"
@@ -75,20 +93,12 @@ const onClickUploadPosts = async (value) => {
     class="w-30rem"
   >
     <div class="flex flex-column gap-3">
-      <div class="flex gap-2">
-        <img
-          class="avatar object-fit-cover on-click"
-          src="https://thuthuatnhanh.com/wp-content/uploads/2021/02/Avatar-ngau-dep.jpg"
-          alt=""
-        />
-
-        <label class="flex flex-column gap-1">
-          <span class="font-bold">Húc Phượng</span>
-          <div class="flex align-items-center gap-1">
-            <span style="font-size: 0.8rem" class="text-600">1 giờ</span>
-          </div>
-        </label>
-      </div>
+      <UserItem
+        :userAvatar="onGetterUserInfo?.avatar"
+        :fullName="onGetterUserInfo?.full_name"
+        :content="formatDate(new Date())"
+        :icon="'pi pi-globe'"
+      />
 
       <Editor
         v-model="data.formUploadPosts.postsContent"

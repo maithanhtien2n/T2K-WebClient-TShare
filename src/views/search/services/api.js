@@ -1,6 +1,6 @@
 import { AxiosInstance } from "@/services/api";
 
-class ApiPersonal {
+class ApiSearch {
   onApiGetGetUserInfo = (params) => {
     return AxiosInstance({
       method: "get",
@@ -9,4 +9,4 @@ class ApiPersonal {
   };
 }
 
-export const API_PERSONAL = new ApiPersonal();
+export const API_SEARCH = new ApiSearch();

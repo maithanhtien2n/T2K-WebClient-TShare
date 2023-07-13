@@ -1,59 +1,48 @@
 <script setup>
 import Posts from "@/components/Posts.vue";
+import UploadPosts from "@/components/UploadPosts.vue";
+import { StoreApp, STORE_PERSONAL } from "@/services/stores";
+import { onMounted } from "vue";
+import Avatar from "./components/Avatar.vue";
+import { appLocalStorage, formatDate } from "@/utils";
 
-const onGetterPostsInfo = [
-  {
-    userAvatar: "https://nguoinoitieng.tv/images/nnt/105/0/biu1.jpg",
-    userName: "Húc Phượng",
-    postsDate: "1 giờ",
-    postsContent: "Hôm nay trời đẹp quá",
-    postsFile:
-      "https://dragonball.guru/wp-content/uploads/2021/01/goku-dragon-ball-guru.jpg",
-    likeAmount: "1100",
-    commentAmount: "121",
-    shareAmount: "75",
-  },
-  {
-    userAvatar: "https://nguoinoitieng.tv/images/nnt/105/0/biu1.jpg",
-    userName: "Húc Phượng",
-    postsDate: "1 giờ",
-    postsContent: "Hôm nay trời đẹp quá",
-    postsFile:
-      "https://dragonball.guru/wp-content/uploads/2021/01/goku-dragon-ball-guru.jpg",
-    likeAmount: "1100",
-    commentAmount: "121",
-    shareAmount: "75",
-  },
-];
+const { onGetterUserInfo } = StoreApp();
+const { onActionGetPostsUser, onGetterListPostsUser } =
+  STORE_PERSONAL.StorePersonal();
+const { user_info } = appLocalStorage();
+
+const onEmitUpdateListPosts = () => {
+  onActionGetPostsUser(user_info.user_id);
+};
+
+const onClickOptionAvatar = () => {};
+
+onMounted(() => {
+  onActionGetPostsUser(user_info.user_id);
+});
 </script>
 
 <template>
   <div class="container-personal pt-8 px-8">
-    <div class="relative w-full z-0">
+    <div class="w-full z-5">
       <img
-        class="banner w-full h-20rem object-fit-cover"
-        src="https://www.gry-online.pl/i/h/25/424526132.jpg"
+        class="banner w-full h-20rem object-fit-cover cursor-pointer box-shadow-1"
+        :src="
+          onGetterUserInfo?.banner_user
+            ? onGetterUserInfo?.banner_user
+            : 'https://png.pngtree.com/thumb_back/fw800/background/20190222/ourmid/pngtree-cartoon-banner-seascape-viewskybluecoconut-treeoceanblue-sky-image_56390.jpg'
+        "
         alt=""
       />
 
-      <img
-        style="
-          transform: translate(-50%, 50%);
-          left: 50%;
-          bottom: 0;
-          border: 3px solid #fff;
-        "
-        class="avatar-1 w-11rem h-11rem border-circle absolute"
-        src="https://toigingiuvedep.vn/wp-content/uploads/2022/11/avatar-ngau-cool-nam.jpg"
-        alt=""
-      />
+      <Avatar :avatar="onGetterUserInfo?.avatar" />
     </div>
 
     <div class="block-1 w-full h-6rem"></div>
 
     <div class="w-full flex flex-column align-items-center gap-3">
       <div class="flex flex-column gap-2 align-items-center">
-        <span class="text-2xl font-bold">Tiện Thanh</span>
+        <span class="text-2xl font-bold">{{ onGetterUserInfo.full_name }}</span>
         <span>Trời hôm nay đẹp quá</span>
       </div>
 
@@ -70,19 +59,19 @@ const onGetterPostsInfo = [
         <div class="col-5 card flex flex-column gap-3 p-3">
           <span class="font-bold">Thông tin</span>
 
-          <div class="container-info col-9 p-0 flex flex-column gap-2">
+          <div class="container-info flex flex-column gap-2">
             <label
               class="flex align-content-center gap-2 justify-content-between"
             >
               <span>Ngày sinh:</span>
-              <span>08/11/2001</span>
+              <span>{{ formatDate(onGetterUserInfo.birth_date) }}</span>
             </label>
 
             <label
               class="flex align-content-center gap-2 justify-content-between"
             >
               <span>Giới tính:</span>
-              <span>Nam</span>
+              <span>{{ onGetterUserInfo.gender }}</span>
             </label>
 
             <label
@@ -105,10 +94,13 @@ const onGetterPostsInfo = [
           style="min-width: 25rem"
           class="container-posts flex-1 flex flex-column gap-3 align-items-center"
         >
+          <UploadPosts @onEmitUpdateListPosts="onEmitUpdateListPosts" />
+
           <Posts
-            v-for="(item, index) in onGetterPostsInfo"
+            v-for="(item, index) in onGetterListPostsUser"
             :key="index"
             :postsContentInfo="item"
+            @onEmitUpdateListPosts="onEmitUpdateListPosts"
           />
         </div>
       </div>
@@ -137,6 +129,7 @@ const onGetterPostsInfo = [
   .container-body {
     flex-wrap: wrap;
     margin-top: 0rem !important;
+    gap: 0.5rem !important;
   }
 
   .card {
@@ -145,6 +138,7 @@ const onGetterPostsInfo = [
 
   .container-posts {
     min-width: 100% !important;
+    gap: 0.5rem !important;
   }
 
   .banner {
@@ -159,8 +153,12 @@ const onGetterPostsInfo = [
 }
 
 @media only screen and (max-width: 600px) {
+  .container-personal {
+    padding-top: 4.2rem !important;
+  }
+
   .banner {
-    height: 12rem !important;
+    height: 11rem !important;
   }
 
   .avatar-1 {

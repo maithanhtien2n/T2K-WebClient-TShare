@@ -3,6 +3,9 @@ import DATA_HEADER from "./data";
 import { reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Notification from "./Notification.vue";
+import { StoreApp } from "@/services/stores";
+
+const { onGetterUserInfo } = StoreApp();
 
 const ROUTER = useRouter();
 const ROUTE = useRoute();
@@ -36,6 +39,7 @@ const onClickItemOption = (code) => {
       data.styleCSS.styleContainerOption.transform = "translateX(-100%)";
       break;
     case "Logout":
+      localStorage.removeItem("AppLocalStorage");
       ROUTER.push({ name: "Login" });
       data.styleCSS.styleContainerOption.transform = "translateX(-100%)";
       break;
@@ -54,11 +58,9 @@ const onClickItemOption = (code) => {
 
     <Notification />
 
-    <img
+    <UserItem
+      :userAvatar="onGetterUserInfo?.user_avatar"
       @click="onClickOpenPopupOption"
-      class="avatar object-fit-cover cursor-pointer on-click-2"
-      src="https://toigingiuvedep.vn/wp-content/uploads/2022/11/avatar-ngau-cool-nam.jpg"
-      alt=""
     />
   </div>
 

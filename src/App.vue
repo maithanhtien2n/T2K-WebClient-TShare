@@ -1,5 +1,15 @@
 <script setup>
 import TheHeader from "./components/TheHeader.vue";
+import { StoreApp } from "@/services/stores";
+import { onMounted } from "vue";
+
+const { onActionGetUserInfo } = StoreApp();
+
+onMounted(async () => {
+  onActionGetUserInfo(
+    JSON.parse(localStorage.getItem("AppLocalStorage"))?.account_id
+  );
+});
 </script>
 
 <template>

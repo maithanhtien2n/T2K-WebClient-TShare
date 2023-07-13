@@ -1,33 +1,19 @@
 <script setup>
 import ColLeft from "./components/ColLeft.vue";
-import UploadPosts from "./components/UploadPosts.vue";
+import UploadPosts from "@/components/UploadPosts.vue";
 import Posts from "@/components/Posts.vue";
 import ColRight from "./components/ColRight.vue";
+import { appLocalStorage } from "@/utils";
+import { STORE_PERSONAL } from "@/services/stores";
+import { onMounted } from "vue";
 
-const onGetterPostsInfo = [
-  {
-    userAvatar: "https://nguoinoitieng.tv/images/nnt/105/0/biu1.jpg",
-    userName: "Húc Phượng",
-    postsDate: "1 giờ",
-    postsContent: "Hôm nay trời đẹp quá",
-    postsFile:
-      "https://dragonball.guru/wp-content/uploads/2021/01/goku-dragon-ball-guru.jpg",
-    likeAmount: "1100",
-    commentAmount: "121",
-    shareAmount: "75",
-  },
-  {
-    userAvatar: "https://nguoinoitieng.tv/images/nnt/105/0/biu1.jpg",
-    userName: "Húc Phượng",
-    postsDate: "1 giờ",
-    postsContent: "Hôm nay trời đẹp quá",
-    postsFile:
-      "https://dragonball.guru/wp-content/uploads/2021/01/goku-dragon-ball-guru.jpg",
-    likeAmount: "1100",
-    commentAmount: "121",
-    shareAmount: "75",
-  },
-];
+const { onActionGetPostsUser, onGetterListPostsUser } =
+  STORE_PERSONAL.StorePersonal();
+const { user_info } = appLocalStorage();
+
+onMounted(() => {
+  onActionGetPostsUser(user_info.user_id);
+});
 </script>
 
 <template>
@@ -42,7 +28,7 @@ const onGetterPostsInfo = [
       <UploadPosts />
 
       <Posts
-        v-for="(item, index) in onGetterPostsInfo"
+        v-for="(item, index) in onGetterListPostsUser"
         :key="index"
         :postsContentInfo="item"
       />

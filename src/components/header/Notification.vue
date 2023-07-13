@@ -29,19 +29,20 @@ const onClickRemovePopup = () => {
 
     <div
       v-if="data.display"
-      style="top: 110%; right: -2.7rem"
-      class="container-notification z-5 p-3 bg-main-color absolute w-30rem flex flex-column gap-3"
+      style="top: 110%; right: -2.8rem"
+      class="container-notification z-5 p-3 bg-light-blue box-shadow-2 border-round-2xl absolute w-25rem flex flex-column gap-3"
     >
       <span class="font-bold">Thông báo</span>
-      <ScrollPanel
-        class="bg-light-blue p-3 border-round-2xl"
-        style="width: 97%; height: 25rem"
-      >
-        <div class="flex flex-column gap-3">
+      <ScrollPanel style="width: 100%; height: 25rem" class="custombar2">
+        <div class="flex flex-column gap-2">
           <UserItem
             v-for="(item, index) in DATA.notifications"
             :key="index"
-            :userInfo="item"
+            :userAvatar="item.userAvatar"
+            :fullName="item.userName"
+            :content="item.content"
+            style="border-bottom: 1px solid #ddd"
+            class="bg-light-blue p-2 mr-4"
           />
         </div>
       </ScrollPanel>

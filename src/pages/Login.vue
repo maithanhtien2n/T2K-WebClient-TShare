@@ -2,12 +2,24 @@
 import * as Yup from "yup";
 import { Form, Field } from "vee-validate";
 import { reactive, ref } from "vue";
+import Register from "../components/Register.vue";
+import { StoreApp } from "@/services/stores";
+import { updateAuthorizationHeader } from "@/services/api";
+import { useRouter } from "vue-router";
+
+const ROUTER = useRouter();
+
+const {
+  onActionActivePopupMessage,
+  onActionAccountLogin,
+  onActionGetAccountInfo,
+} = StoreApp();
 
 const formLogin = ref(null);
 
 const data = reactive({
   formLogin: {
-    email: "",
+    userName: "",
     password: "",
   },
 });
@@ -20,13 +32,29 @@ const onCheckValidate = () => {
   return Yup.object({
     errors: Yup.string().nullable(),
 
-    email: Yup.string().required("Vui lòng nhập tên tài khoản!"),
+    userName: Yup.string().required("Vui lòng nhập tên tài khoản!"),
+
     password: Yup.string().required("Vui lòng nhập mật khẩu!"),
   });
 };
 
-const onClickButtonLogin = (value) => {
-  console.log(value);
+const onClickButtonLogin = async (value) => {
+  const res = await onActionAccountLogin(value);
+
+  if (res.statusCode === 200) {
+    localStorage.setItem("AppLocalStorage", JSON.stringify(res.data));
+    updateAuthorizationHeader(res.data.accessToken);
+
+    ROUTER.push({ name: "Home" });
+
+    return;
+  }
+
+  if (res.statusCode === 205) {
+    onActionActivePopupMessage(true, 0, res.statusValue);
+
+    return;
+  }
 };
 </script>
 
@@ -42,7 +70,7 @@ const onClickButtonLogin = (value) => {
       :validation-schema="onCheckValidate()"
       @submit="onClickButtonLogin"
     >
-      <Field v-slot="{ field, errorMessage, handleChange }" name="email">
+      <Field v-slot="{ field, errorMessage, handleChange }" name="userName">
         <div class="flex flex-column gap-1">
           <InputText
             class="w-full"
@@ -84,11 +112,8 @@ const onClickButtonLogin = (value) => {
         </div>
       </div>
 
-      <div
-        class="w-full text-center py-3 font-bold cursor-pointer border-top-1 text-500"
-      >
-        <span class="text-900 on-click"> Tạo tài khoản mới</span>
-      </div>
+      <!-- Tạo tài khoản mới -->
+      <Register />
     </Form>
   </div>
 </template>
