@@ -10,9 +10,9 @@ import { useRouter } from "vue-router";
 const ROUTER = useRouter();
 
 const {
+  onActionLoadingActive,
   onActionActivePopupMessage,
   onActionAccountLogin,
-  onActionGetAccountInfo,
 } = StoreApp();
 
 const formLogin = ref(null);
@@ -39,13 +39,18 @@ const onCheckValidate = () => {
 };
 
 const onClickButtonLogin = async (value) => {
+  onActionLoadingActive(true);
+
   const res = await onActionAccountLogin(value);
 
   if (res.statusCode === 200) {
     localStorage.setItem("AppLocalStorage", JSON.stringify(res.data));
     updateAuthorizationHeader(res.data.accessToken);
 
-    ROUTER.push({ name: "Home" });
+    setTimeout(() => {
+      onActionLoadingActive(false);
+      ROUTER.push({ name: "Home" });
+    }, 1000);
 
     return;
   }

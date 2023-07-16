@@ -1,7 +1,11 @@
 <script setup>
-import { reactive } from "vue";
+import { computed, reactive, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import PopupOption from "./header/PopupOption.vue";
+import { StoreApp } from "@/services/stores";
+
+const { onActionLoadingActive, onActionSearch, onGetterPostsSearch } =
+  StoreApp();
 
 const ROUTER = useRouter();
 const ROUTE = useRoute();
@@ -9,53 +13,73 @@ const ROUTE = useRoute();
 const data = reactive({
   keySearch: "",
   displaySearch: true,
+  popupSearchSuggestions: false,
   screenWidth: window.innerWidth,
 });
 
 window.addEventListener("scroll", () => {
-  window.scrollY > 54 && +data.screenWidth < 800
-    ? (data.displaySearch = false)
-    : (data.displaySearch = true);
+  if (window.scrollY > 54 && +data.screenWidth < 800) {
+    data.displaySearch = false;
+    data.keySearch = "";
+  } else {
+    data.displaySearch = true;
+  }
 });
 
 window.addEventListener("resize", () => {
   data.screenWidth = window.innerWidth;
 });
 
-const onClickSearch = () => {
-  ROUTER.push({ name: "Search", query: { key: data.keySearch } });
+const onClickOpenSearchSuggestions = () => {
+  if (data.keySearch) data.popupSearchSuggestions = true;
 };
 
-const listSearch = {
-  users: [
-    {
-      fullName: "Tiện Thanh",
-      content: "Bạn bè",
-    },
-    {
-      fullName: "Tiện Thanh",
-      content: "Bạn bè",
-    },
-    {
-      fullName: "Tiện Thanh",
-      content: "Bạn bè",
-    },
-  ],
-  posts: [
-    {
-      title: "Hôm nay trời đẹp quá",
-    },
-    {
-      title: "Bài hát hót nhất hôm nay",
-    },
-    {
-      title: "Bài hát hót nhất hôm nay",
-    },
-  ],
+watch(
+  () => data.keySearch,
+  (value) => {
+    if (value) data.popupSearchSuggestions = true;
+    else data.popupSearchSuggestions = false;
+  }
+);
+
+const onClickSearch = () => {
+  onActionLoadingActive(true);
+  data.popupSearchSuggestions = false;
+
+  setTimeout(() => {
+    onActionLoadingActive(false);
+
+    ROUTER.push({ name: "Search", query: { key: data.keySearch } });
+  }, 1000);
+};
+
+const onKeyEnterSearch = () => {
+  if (data.keySearch) onClickSearch();
+};
+
+const onInputSearch = () => {
+  onActionSearch(data.keySearch);
+};
+
+const onClickUserItemInfo = (userName) => {
+  onActionLoadingActive(true);
+  data.popupSearchSuggestions = false;
+  data.keySearch = "";
+
+  setTimeout(() => {
+    onActionLoadingActive(false);
+    ROUTER.push({ name: "Personal", params: { string: userName } });
+  }, 1000);
 };
 </script>
 
 <template>
+  <div
+    v-if="data.popupSearchSuggestions"
+    class="bg-remove fixed top-0 left-0 right-0 bottom-0 bg-black-alpha-40 z-1 bg-black-alpha-50"
+    @click="data.popupSearchSuggestions = false"
+  ></div>
+
   <div
     style="border-bottom: 1px solid #ddd; z-index: 999"
     class="container-header fixed bg-white top-0 left-0 right-0 py-2 px-8"
@@ -70,7 +94,7 @@ const listSearch = {
 
       <div
         v-if="ROUTE.name === 'Home' || +data.screenWidth > 800"
-        class="container-search"
+        class="container-search relative"
       >
         <div
           v-if="data.displaySearch"
@@ -81,30 +105,38 @@ const listSearch = {
             class="w-full border-none bg-transparent outline-none"
             type="text"
             placeholder="Bạn cần tìm gì?"
-            @keydown.enter="onClickSearch"
+            @keydown.enter="onKeyEnterSearch"
+            @click="onClickOpenSearchSuggestions"
+            @input="onInputSearch"
           />
           <i
             @click="onClickSearch"
             class="pi pi-search on-click-3 cursor-pointer"
+            :class="{ 'p-disabled': !data.keySearch }"
           />
         </div>
 
         <div
-          v-if="data.displaySearch && data.keySearch"
-          class="box-shadow-2 py-2 bg-white border-round-lg mt-2 flex flex-column"
+          v-if="data.displaySearch && data.popupSearchSuggestions"
+          class="absolute left-0 right-0 box-shadow-2 py-2 bg-white border-round-lg mt-2 flex flex-column"
         >
           <!-- Người dùng -->
           <div
-            v-for="(item, index) in listSearch.users"
+            v-for="(item, index) in onGetterPostsSearch?.users?.slice(0, 2)"
             :key="index"
             class="search-item px-3 py-2 border-round-lg flex align-items-center border-bottom-1 text-100 cursor-pointer on-click unselectable"
+            @click="onClickUserItemInfo(item.account_info.user_name)"
           >
-            <UserItem :fullName="item.fullName" :content="item.content" />
+            <UserItem
+              :userAvatar="item.avatar_user"
+              :fullName="item.full_name"
+              :content="item.gender"
+            />
           </div>
 
           <!-- Bài viết -->
           <div
-            v-for="(item, index) in listSearch.posts"
+            v-for="(item, index) in onGetterPostsSearch?.posts?.slice(0, 2)"
             :key="index"
             class="search-item px-3 py-2 border-round-lg gap-2 flex align-items-center border-bottom-1 text-100 cursor-pointer on-click unselectable"
           >
@@ -112,7 +144,7 @@ const listSearch = {
               class="avatar box-shadow-1 flex justify-content-center align-items-center pi pi-pencil text-900"
             />
 
-            <span class="text-900">{{ item.title }}</span>
+            <span class="text-900" v-html="item.posts_content"></span>
           </div>
 
           <!-- Footer search -->
@@ -124,7 +156,7 @@ const listSearch = {
             />
 
             <span class="text-main-color"
-              >Bạn muốn tìm "{{ data.keySearch }}"</span
+              >Tìm với từ khóa "{{ data.keySearch }}"</span
             >
           </div>
         </div>
@@ -152,7 +184,7 @@ const listSearch = {
   }
 
   .container-search {
-    position: absolute;
+    position: absolute !important;
     left: 0rem !important;
     right: 0rem !important;
     top: 170%;

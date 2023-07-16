@@ -50,6 +50,8 @@ const props = defineProps({
 
         <i v-if="props?.icon" style="font-size: 0.7rem" :class="props?.icon" />
       </div>
+
+      <slot />
     </label>
   </div>
 </template>

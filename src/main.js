@@ -37,6 +37,7 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Editor from "primevue/editor";
 import ScrollPanel from "primevue/scrollpanel";
+import Image from "primevue/image";
 
 const app = createApp(AppWrapper);
 
@@ -63,5 +64,6 @@ app.component("DataTable", DataTable);
 app.component("Column", Column);
 app.component("Editor", Editor);
 app.component("ScrollPanel", ScrollPanel);
+app.component("Image", Image);
 
 app.mount("#app");

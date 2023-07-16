@@ -28,11 +28,26 @@ export const StorePersonal = defineStore("StorePersonal", () => {
       });
   };
 
+  const onActionUpdateAvatar = async (args) => {
+    return await API_PERSONAL.API_PERSONAL.onApiUpdateAvatar(args)
+      .then(({ data: res }) => {
+        if (res.statusCode === 200) {
+          return true;
+        } else {
+          throw res.statusValue;
+        }
+      })
+      .catch((error) => {
+        console.log("Lỗi: " + error);
+      });
+  };
+
   return {
     // Getter
     onGetterListPostsUser,
 
     // Action
     onActionGetPostsUser,
+    onActionUpdateAvatar,
   };
 });

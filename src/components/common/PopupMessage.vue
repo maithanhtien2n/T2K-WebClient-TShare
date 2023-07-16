@@ -26,6 +26,15 @@ const { onGetterPopupMessage } = StoreApp();
         class="pi pi-exclamation-circle text-3xl"
       />
 
+      <ProgressSpinner
+        v-if="onGetterPopupMessage?.status === null"
+        style="width: 30px; height: 30px"
+        strokeWidth="8"
+        fill="var(--surface-ground)"
+        animationDuration=".5s"
+        aria-label="Custom ProgressSpinner"
+      />
+
       <span class="line-height-3 text-center">{{
         onGetterPopupMessage?.content
       }}</span>

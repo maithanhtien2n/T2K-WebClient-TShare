@@ -1,13 +1,15 @@
 <script setup>
-import { reactive, toRef } from "vue";
+import { toRef } from "vue";
 
-const props = reactive({
+const props = defineProps({
   display: {
     type: Boolean,
-    required: true,
-    default: true,
+    required: false,
+    default: false,
   },
 });
+
+const emit = defineEmits(["onEmitRemovePopup"]);
 
 const display = toRef(props, "display");
 </script>
@@ -15,7 +17,7 @@ const display = toRef(props, "display");
 <template>
   <div
     v-if="display"
-    class="fixed top-0 left-0 right-0 bottom-0 bg-black-alpha-50"
-    @click="display = false"
+    class="fixed top-0 left-0 right-0 bottom-0 bg-black-alpha-30 z-1"
+    @click="emit('onEmitRemovePopup')"
   ></div>
 </template>

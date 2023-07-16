@@ -59,7 +59,7 @@ const onClickItemOption = (code) => {
     <Notification />
 
     <UserItem
-      :userAvatar="onGetterUserInfo?.user_avatar"
+      :userAvatar="onGetterUserInfo?.avatar_user"
       @click="onClickOpenPopupOption"
     />
   </div>

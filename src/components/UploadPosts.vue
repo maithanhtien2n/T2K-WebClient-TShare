@@ -3,7 +3,7 @@ import { reactive } from "vue";
 import { appLocalStorage, formatDate } from "@/utils";
 import { StoreApp } from "@/services/stores";
 
-const { onGetterUserInfo } = StoreApp();
+const { onGetterUserInfo, onActionActivePopupMessage } = StoreApp();
 
 const { onActionCreateNewPosts } = StoreApp();
 
@@ -48,6 +48,9 @@ const onClickOpenUploadPosts = () => {
 };
 
 const onClickUploadPosts = async (value) => {
+  onActionActivePopupMessage(true, null, "Đang tải lên...");
+  data.display = false;
+
   formData.set("user_id", user_info.user_id);
   formData.set("posts_content", value.postsContent);
   formData.set("posts_file", value.postsFile);
@@ -56,19 +59,25 @@ const onClickUploadPosts = async (value) => {
   const res = await onActionCreateNewPosts(formData);
 
   if (res) {
-    data.display = false;
-    emits("onEmitUpdateListPosts");
-    data.formUploadPosts.postsContent = "";
-    data.formUploadPosts.postsFile = "";
-    data.previewFile = "";
-    data.typeFile = "";
+    setTimeout(() => {
+      emits("onEmitUpdateListPosts");
+      onActionActivePopupMessage(
+        true,
+        1,
+        "Bài viết của bạn đã được tải lên bảng tin!"
+      );
+      data.formUploadPosts.postsContent = "";
+      data.formUploadPosts.postsFile = "";
+      data.previewFile = "";
+      data.typeFile = "";
+    }, 1000);
   }
 };
 </script>
 
 <template>
   <div class="card w-full flex align-items-center gap-2">
-    <UserItem :userAvatar="onGetterUserInfo?.avatar" />
+    <UserItem :userAvatar="onGetterUserInfo?.avatar_user" />
 
     <div
       @click="onClickOpenUploadPosts()"
@@ -94,7 +103,7 @@ const onClickUploadPosts = async (value) => {
   >
     <div class="flex flex-column gap-3">
       <UserItem
-        :userAvatar="onGetterUserInfo?.avatar"
+        :userAvatar="onGetterUserInfo?.avatar_user"
         :fullName="onGetterUserInfo?.full_name"
         :content="formatDate(new Date())"
         :icon="'pi pi-globe'"

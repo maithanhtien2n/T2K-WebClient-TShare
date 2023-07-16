@@ -4,17 +4,11 @@ import Comment from "./Comment.vue";
 import { appLocalStorage, formatDate } from "@/utils";
 import { StoreApp } from "@/services/stores";
 
+const props = defineProps(["postsContentInfo"]);
+
 const { onActionLikePosts } = StoreApp();
 
 const { user_info } = appLocalStorage();
-
-const props = defineProps({
-  postsContentInfo: {
-    type: Object,
-    required: true,
-    default: () => {},
-  },
-});
 
 const emits = defineEmits(["onEmitUpdateListPosts"]);
 

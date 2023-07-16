@@ -9,13 +9,11 @@ import { appLocalStorage, formatDate } from "@/utils";
 const { onGetterUserInfo } = StoreApp();
 const { onActionGetPostsUser, onGetterListPostsUser } =
   STORE_PERSONAL.StorePersonal();
-const { user_info } = appLocalStorage();
+const { user_info, account_id } = appLocalStorage();
 
 const onEmitUpdateListPosts = () => {
   onActionGetPostsUser(user_info.user_id);
 };
-
-const onClickOptionAvatar = () => {};
 
 onMounted(() => {
   onActionGetPostsUser(user_info.user_id);
@@ -35,7 +33,13 @@ onMounted(() => {
         alt=""
       />
 
-      <Avatar :avatar="onGetterUserInfo?.avatar" />
+      <Avatar
+        :info="{
+          account_id: account_id,
+          user_id: user_info.user_id,
+          avatar: onGetterUserInfo?.avatar_user,
+        }"
+      />
     </div>
 
     <div class="block-1 w-full h-6rem"></div>

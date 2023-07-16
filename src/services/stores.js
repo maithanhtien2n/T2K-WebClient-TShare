@@ -7,11 +7,15 @@ export * as STORE_PERSONAL from "@/views/personal/services/store";
 export const StoreApp = defineStore("StoreApp", () => {
   // State
   const popUpMessage = ref({});
+  const loadingActive = ref(false);
 
   const userInfo = reactive({});
+  const postsSearch = reactive([]);
 
   // Getter
   const onGetterPopupMessage = computed(() => popUpMessage);
+  const onGetterLoadingActive = computed(() => loadingActive);
+  const onGetterPostsSearch = computed(() => postsSearch);
 
   const onGetterUserInfo = computed(() => userInfo);
 
@@ -22,6 +26,10 @@ export const StoreApp = defineStore("StoreApp", () => {
       status,
       content,
     };
+  };
+
+  const onActionLoadingActive = (bl) => {
+    loadingActive.value = bl;
   };
 
   const onActionAccountRegister = async (args) => {
@@ -112,19 +120,38 @@ export const StoreApp = defineStore("StoreApp", () => {
       });
   };
 
+  const onActionSearch = async (args) => {
+    return await API_APP.onApiSearch(args)
+      .then(({ data: res }) => {
+        if (res.statusCode === 200) {
+          Object.assign(postsSearch, res.data);
+          return true;
+        } else {
+          throw res.statusValue;
+        }
+      })
+      .catch((error) => {
+        console.log("Lỗi: " + error);
+      });
+  };
+
   return {
     // Getter
     onGetterPopupMessage,
+    onGetterLoadingActive,
 
     onGetterUserInfo,
+    onGetterPostsSearch,
 
     // Action
     onActionActivePopupMessage,
+    onActionLoadingActive,
     onActionAccountRegister,
     onActionAccountLogin,
     onActionGetUserInfo,
     onActionLikePosts,
     onActionCommentPosts,
     onActionCreateNewPosts,
+    onActionSearch,
   };
 });
