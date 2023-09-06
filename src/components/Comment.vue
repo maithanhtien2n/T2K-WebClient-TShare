@@ -61,7 +61,7 @@ const onClickSendCommentPosts = async () => {
     header="Đáng giá 1$"
     class="w-30rem"
   >
-    <div @scroll="alert('nhận')" class="flex flex-column gap-3">
+    <div class="flex flex-column gap-3 h-20rem">
       <div v-for="(cmt, index) in commentInfo" :key="index" class="flex gap-2">
         <UserItem :userAvatar="cmt?.user_info?.avatar_user" />
 
@@ -73,6 +73,13 @@ const onClickSendCommentPosts = async () => {
             <span class="text-600">{{ cmt?.comment_content }}</span>
           </div>
         </label>
+      </div>
+
+      <div
+        v-if="commentInfo?.length < 1"
+        class="w-full h-full flex justify-content-center align-items-center text-600"
+      >
+        Chưa có bình luận nào.
       </div>
     </div>
 

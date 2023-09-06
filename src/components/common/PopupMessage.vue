@@ -1,12 +1,22 @@
 <script setup>
 import { StoreApp } from "@/services/stores";
+import { ref, watch } from "vue";
 
 const { onGetterPopupMessage } = StoreApp();
+
+const display = ref(false);
+
+watch(
+  () => onGetterPopupMessage.value.content,
+  (value) => {
+    display.value = true;
+  }
+);
 </script>
 
 <template>
   <Dialog
-    v-model:visible="onGetterPopupMessage.display"
+    v-model:visible="display"
     modal
     header="Thông báo"
     :style="{ width: '30rem' }"

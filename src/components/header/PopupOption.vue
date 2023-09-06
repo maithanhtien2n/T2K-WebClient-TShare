@@ -4,8 +4,11 @@ import { reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Notification from "./Notification.vue";
 import { StoreApp } from "@/services/stores";
+import { appLocalStorage } from "@/utils";
 
 const { onGetterUserInfo } = StoreApp();
+
+const { user_name } = appLocalStorage();
 
 const ROUTER = useRouter();
 const ROUTE = useRoute();
@@ -31,7 +34,7 @@ const onClickRemovePopupOption = () => {
 const onClickItemOption = (code) => {
   switch (code) {
     case "Personal":
-      ROUTER.push({ name: "Personal", params: { string: "tienthanh2000" } });
+      ROUTER.push({ name: "Personal", params: { username: user_name } });
       data.styleCSS.styleContainerOption.transform = "translateX(-100%)";
       break;
     case "Setting":

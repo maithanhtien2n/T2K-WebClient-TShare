@@ -68,7 +68,7 @@ const onClickUserItemInfo = (userName) => {
 
   setTimeout(() => {
     onActionLoadingActive(false);
-    ROUTER.push({ name: "Personal", params: { string: userName } });
+    ROUTER.push({ name: "Personal", params: { username: userName } });
   }, 1000);
 };
 </script>
@@ -81,8 +81,8 @@ const onClickUserItemInfo = (userName) => {
   ></div>
 
   <div
-    style="border-bottom: 1px solid #ddd; z-index: 999"
-    class="container-header fixed bg-white top-0 left-0 right-0 py-2 px-8"
+    style="border-bottom: 1px solid #ddd"
+    class="container-header fixed bg-white top-0 left-0 right-0 py-2 px-8 z-3"
   >
     <div class="relative flex align-items-center justify-content-between">
       <div

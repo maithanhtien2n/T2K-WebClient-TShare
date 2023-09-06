@@ -1,6 +1,6 @@
 export default [
   {
-    path: "/:string",
+    path: "/:username",
     name: "Personal",
     component: () => import("../Personal.vue"),
   },

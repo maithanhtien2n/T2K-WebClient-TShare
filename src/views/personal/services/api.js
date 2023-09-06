@@ -1,7 +1,14 @@
 import { AxiosInstance } from "@/services/api";
 
 class ApiPersonal {
-  onApiGetGetUserInfo = (params) => {
+  onApiGetUserPersonalInfo = (params) => {
+    return AxiosInstance({
+      method: "get",
+      url: `personal-info/${params}`,
+    });
+  };
+
+  onApiGetPostsUser = (params) => {
     return AxiosInstance({
       method: "get",
       url: `posts/${params}`,

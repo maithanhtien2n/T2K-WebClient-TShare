@@ -3,12 +3,12 @@ import axios from "axios";
 export * as API_PERSONAL from "@/views/personal/services/api";
 
 class ApiApp {
-  onApiAccountRegister = (args) => {
-    return AxiosInstance({
+  onApiAccountRegister = async (args) => {
+    return await AxiosInstance({
       method: "post",
       url: "account/register",
       data: {
-        full_name: `${args?.lastName + " " + args?.firstName}` || null,
+        full_name: `${args?.firstName + " " + args?.lastName}` || null,
         user_name: args?.userName || null,
         password: args?.password,
         birth_date: args?.dateOfBirth || null,
@@ -17,8 +17,8 @@ class ApiApp {
     });
   };
 
-  onApiAccountLogin = (args) => {
-    return AxiosInstance({
+  onApiAccountLogin = async (args) => {
+    return await AxiosInstance({
       method: "post",
       url: "account/login",
       data: {
@@ -28,15 +28,15 @@ class ApiApp {
     });
   };
 
-  onApiGetGetUserInfo = (params) => {
-    return AxiosInstance({
+  onApiGetGetUserInfo = async (params) => {
+    return await AxiosInstance({
       method: "get",
       url: `user-info/${params}`,
     });
   };
 
-  onApiLikePosts = (args) => {
-    return AxiosInstance({
+  onApiLikePosts = async (args) => {
+    return await AxiosInstance({
       method: "post",
       url: "posts/like",
       data: {
@@ -46,8 +46,8 @@ class ApiApp {
     });
   };
 
-  onApiCommentPosts = (args) => {
-    return AxiosInstance({
+  onApiCommentPosts = async (args) => {
+    return await AxiosInstance({
       method: "post",
       url: "posts/comment",
       data: {
@@ -58,8 +58,8 @@ class ApiApp {
     });
   };
 
-  onApiCreateNewPosts = (args) => {
-    return AxiosInstance({
+  onApiCreateNewPosts = async (args) => {
+    return await AxiosInstance({
       method: "post",
       url: "posts",
       data: args,
@@ -69,8 +69,8 @@ class ApiApp {
     });
   };
 
-  onApiSearch = (args) => {
-    return AxiosInstance({
+  onApiSearch = async (args) => {
+    return await AxiosInstance({
       method: "post",
       url: "search",
       data: {
@@ -83,9 +83,11 @@ class ApiApp {
 export const API_APP = new ApiApp();
 
 const AxiosInstance = axios.create({
+  baseURL: "https://tshare.onrender.com/api/v1/",
+
   // baseURL: "http://localhost:3000/api/v1/",
 
-  baseURL: "http://192.168.1.4:3000/api/v1/",
+  // baseURL: "http://192.168.1.4:9000/api/v1/",
 
   // baseURL: "https://missa.serveo.net/api/v1/",
 });

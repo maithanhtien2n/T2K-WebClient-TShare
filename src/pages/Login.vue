@@ -38,28 +38,22 @@ const onCheckValidate = () => {
   });
 };
 
-const onClickButtonLogin = async (value) => {
+const onClickButtonLogin = (value) => {
   onActionLoadingActive(true);
 
-  const res = await onActionAccountLogin(value);
-
-  if (res.statusCode === 200) {
-    localStorage.setItem("AppLocalStorage", JSON.stringify(res.data));
-    updateAuthorizationHeader(res.data.accessToken);
-
-    setTimeout(() => {
+  onActionAccountLogin(value)
+    .then((res) => {
+      if (res?.statusCode === 200)
+        localStorage.setItem("AppLocalStorage", JSON.stringify(res.data));
+      updateAuthorizationHeader(res.data.accessToken);
       onActionLoadingActive(false);
+
       ROUTER.push({ name: "Home" });
-    }, 1000);
-
-    return;
-  }
-
-  if (res.statusCode === 205) {
-    onActionActivePopupMessage(true, 0, res.statusValue);
-
-    return;
-  }
+    })
+    .catch((error) => {
+      onActionActivePopupMessage(0, error);
+      onActionLoadingActive(false);
+    });
 };
 </script>
 

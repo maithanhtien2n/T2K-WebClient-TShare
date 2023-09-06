@@ -11,6 +11,10 @@ const { onActionGetPostsUser, onGetterListPostsUser } =
   STORE_PERSONAL.StorePersonal();
 const { user_info } = appLocalStorage();
 
+const onEmitUpdateListPosts = () => {
+  onActionGetPostsUser(user_info.user_id);
+};
+
 onMounted(() => {
   onActionGetPostsUser(user_info.user_id);
 });
@@ -31,6 +35,7 @@ onMounted(() => {
         v-for="(item, index) in onGetterListPostsUser"
         :key="index"
         :postsContentInfo="item"
+        @onEmitUpdateListPosts="onEmitUpdateListPosts"
       />
     </div>
 

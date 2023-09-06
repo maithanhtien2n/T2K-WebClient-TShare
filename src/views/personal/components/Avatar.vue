@@ -1,17 +1,15 @@
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive } from "vue";
 import { StoreApp, STORE_PERSONAL } from "@/services/stores";
+import { useRoute } from "vue-router";
 
 const { onActionActivePopupMessage, onActionGetUserInfo } = StoreApp();
-const { onActionUpdateAvatar } = STORE_PERSONAL.StorePersonal();
+const { onActionUpdateAvatar, onActionGetUserPersonalInfo } =
+  STORE_PERSONAL.StorePersonal();
 
-const props = defineProps({
-  info: {
-    type: Object,
-    required: false,
-    default: () => {},
-  },
-});
+const ROUTE = useRoute();
+
+const props = defineProps(["info", "updateAvatar"]);
 
 const formData = new FormData();
 
@@ -51,7 +49,7 @@ const onClickRemoveFile = (previewFile, sendfile) => {
 };
 
 const onClickUpdateNewAvatar = async () => {
-  onActionActivePopupMessage(true, null, "Đang tải...");
+  onActionActivePopupMessage(null, "Đang cập nhật...");
   data.popupAvatarPreview = false;
 
   formData.set("user_id", props.info.user_id);
@@ -59,12 +57,9 @@ const onClickUpdateNewAvatar = async () => {
 
   const res = await onActionUpdateAvatar(formData);
 
-  if (res) {
-    setTimeout(() => {
-      onActionGetUserInfo(props.info.account_id);
-      onActionActivePopupMessage(true, 1, "Cập nhật ảnh đại diện thành công!");
-    }, 1000);
-  }
+  if (res) await onActionGetUserInfo(props.info.account_id);
+  onActionGetUserPersonalInfo(ROUTE.params.username);
+  onActionActivePopupMessage(1, "Cập nhật ảnh đại diện thành công!");
 };
 </script>
 
@@ -103,7 +98,7 @@ const onClickUpdateNewAvatar = async () => {
           bottom: 0;
           border: 3px solid #fff;
         "
-        class="avatar-1 w-11rem h-11rem border-circle on-click absolute box-shadow-1 cursor-pointer"
+        class="avatar-1 bg-white w-11rem h-11rem border-circle on-click absolute box-shadow-1 cursor-pointer"
         :src="
           props?.info.avatar
             ? props?.info.avatar
@@ -115,8 +110,8 @@ const onClickUpdateNewAvatar = async () => {
 
     <div
       v-if="data.displayOption"
-      style="bottom: -9rem; left: 50%; transform: translateX(-50%)"
-      class="option-avatar-container flex flex-column overflow-hidden border-round-lg bg-white box-shadow-2 absolute z-5"
+      style="top: 4.5rem; left: 50%; transform: translateX(-50%)"
+      class="flex flex-column overflow-hidden border-round-lg bg-white box-shadow-2 absolute z-5"
     >
       <span
         @click="
@@ -131,6 +126,7 @@ const onClickUpdateNewAvatar = async () => {
       >
 
       <span
+        v-if="props.updateAvatar"
         @click="onClickRemovePopup"
         class="option-avatar relative cursor-pointer p-3 on-click unselectable"
       >
@@ -148,7 +144,7 @@ const onClickUpdateNewAvatar = async () => {
 
   <div
     v-if="data.displayBg"
-    class="fixed top-0 left-0 right-0 bottom-0 bg-black-alpha-30 z-1"
+    class="fixed top-0 left-0 right-0 bottom-0 bg-black-alpha-30 z-4"
     @click="onClickRemovePopup"
   ></div>
 
@@ -158,7 +154,15 @@ const onClickUpdateNewAvatar = async () => {
     header="Xem ảnh"
     class="w-30rem"
   >
-    <img class="w-full box-shadow-2 mt-1" :src="props.info.avatar" alt="" />
+    <img
+      class="w-full h-20rem object-fit-cover box-shadow-2 mt-1"
+      :src="
+        props.info.avatar
+          ? props.info.avatar
+          : 'https://trinhvantuyen.com/wp-content/uploads/2022/03/avatar-nam.jpg'
+      "
+      alt=""
+    />
   </Dialog>
 </template>
 

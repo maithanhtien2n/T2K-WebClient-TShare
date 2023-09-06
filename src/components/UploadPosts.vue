@@ -48,7 +48,7 @@ const onClickOpenUploadPosts = () => {
 };
 
 const onClickUploadPosts = async (value) => {
-  onActionActivePopupMessage(true, null, "Đang tải lên...");
+  onActionActivePopupMessage(null, "Đang tải lên...");
   data.display = false;
 
   formData.set("user_id", user_info.user_id);
@@ -59,19 +59,16 @@ const onClickUploadPosts = async (value) => {
   const res = await onActionCreateNewPosts(formData);
 
   if (res) {
-    setTimeout(() => {
-      emits("onEmitUpdateListPosts");
-      onActionActivePopupMessage(
-        true,
-        1,
-        "Bài viết của bạn đã được tải lên bảng tin!"
-      );
-      data.formUploadPosts.postsContent = "";
-      data.formUploadPosts.postsFile = "";
-      data.previewFile = "";
-      data.typeFile = "";
-    }, 1000);
+    emits("onEmitUpdateListPosts");
+    onActionActivePopupMessage(1, "Bài viết của bạn đã được tải lên bảng tin!");
+  } else {
+    onActionActivePopupMessage(0, "Tải lên bài viết thất bại!");
   }
+
+  data.formUploadPosts.postsContent = "";
+  data.formUploadPosts.postsFile = "";
+  data.previewFile = "";
+  data.typeFile = "";
 };
 </script>
 

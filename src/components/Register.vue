@@ -4,7 +4,11 @@ import { Form, Field } from "vee-validate";
 import { reactive, ref } from "vue";
 import { StoreApp } from "@/services/stores";
 
-const { onActionActivePopupMessage, onActionAccountRegister } = StoreApp();
+const {
+  onActionActivePopupMessage,
+  onActionAccountRegister,
+  onActionLoadingActive,
+} = StoreApp();
 
 const formRegister = ref(null);
 
@@ -52,6 +56,8 @@ const onCheckValidate = () => {
 };
 
 const onClickButtonRegister = async (value) => {
+  onActionLoadingActive(true);
+
   if (value.password !== value.confirmPassword) {
     formRegister.value.setFieldError(
       "confirmPassword",
@@ -62,15 +68,16 @@ const onClickButtonRegister = async (value) => {
 
   const res = await onActionAccountRegister(value);
 
+  onActionLoadingActive(false);
+
   if (res === "OK") data.display = false;
   onActionActivePopupMessage(
-    true,
     1,
     "Chúc mừng bạn đã đăng ký tài khoản thành công. Hãy đăng nhập để tận hưởng những trải nghiệm tuyệt vời mà chúng tôi mang đến."
   );
 
   if (res === "EXIST")
-    formRegister.value.setFieldError("userName", "Tên người dùng đã tồn tại");
+    onActionActivePopupMessage(0, "Tên người dùng đã tồn tại.");
 };
 </script>
 

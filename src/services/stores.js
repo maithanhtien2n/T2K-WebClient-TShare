@@ -20,9 +20,8 @@ export const StoreApp = defineStore("StoreApp", () => {
   const onGetterUserInfo = computed(() => userInfo);
 
   // Action
-  const onActionActivePopupMessage = (display, status, content) => {
+  const onActionActivePopupMessage = (status, content) => {
     popUpMessage.value = {
-      display,
       status,
       content,
     };
@@ -52,7 +51,7 @@ export const StoreApp = defineStore("StoreApp", () => {
   const onActionAccountLogin = async (args) => {
     return await API_APP.onApiAccountLogin(args)
       .then(({ data: res }) => {
-        if (res.statusCode === 200 || res.statusCode === 205) {
+        if (res.statusCode === 200) {
           return res;
         } else {
           throw res.statusValue;
@@ -60,6 +59,7 @@ export const StoreApp = defineStore("StoreApp", () => {
       })
       .catch((error) => {
         console.log("Lỗi: " + error);
+        throw error;
       });
   };
 
@@ -68,13 +68,14 @@ export const StoreApp = defineStore("StoreApp", () => {
       .then(({ data: res }) => {
         if (res.statusCode === 200) {
           Object.assign(userInfo, res.data);
-          return res.data;
+          return true;
         } else {
           throw res.statusValue;
         }
       })
       .catch((error) => {
         console.log("Lỗi: " + error);
+        throw error;
       });
   };
 
